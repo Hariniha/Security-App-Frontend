@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AuthPage from './components/AuthPage';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import SecureChat from './components/SecureChat';
@@ -8,7 +9,21 @@ import BreachMonitor from './components/BreachMonitor';
 import Settings from './components/Settings';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeModule, setActiveModule] = useState('dashboard');
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setActiveModule('dashboard');
+  };
+
+  if (!isAuthenticated) {
+    return <AuthPage onLogin={handleLogin} />;
+  }
 
   const renderActiveModule = () => {
     switch (activeModule) {
@@ -32,7 +47,11 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       <div className="flex">
-        <Sidebar activeModule={activeModule} setActiveModule={setActiveModule} />
+        <Sidebar 
+          activeModule={activeModule} 
+          setActiveModule={setActiveModule}
+          onLogout={handleLogout}
+        />
         <main className="flex-1 ml-64 p-6 min-h-screen">
           <div className="max-w-7xl mx-auto">
             {renderActiveModule()}
