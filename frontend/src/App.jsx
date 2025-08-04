@@ -35,8 +35,6 @@ function App() {
         return <FileVault />;
       case 'passwords':
         return <PasswordManager />;
-      case 'breaches':
-        return <BreachMonitor />;
       case 'settings':
         return <Settings />;
       default:

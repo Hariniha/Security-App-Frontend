@@ -8,7 +8,7 @@ const Sidebar = ({ activeModule, setActiveModule }) => {
     { id: 'chat', label: 'Secure Chat', icon: MessageSquare },
     { id: 'vault', label: 'File Vault', icon: FolderLock },
     { id: 'passwords', label: 'Passwords', icon: Key },
-    { id: 'breaches', label: 'Breach Monitor', icon: AlertTriangle },
+   
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
