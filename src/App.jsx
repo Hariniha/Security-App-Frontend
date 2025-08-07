@@ -9,6 +9,9 @@ import PasswordManager from './components/PasswordManager';
 import Settings from './components/Settings';
 import ResetPassword from './components/ResetPassword';
 
+
+
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeModule, setActiveModule] = useState('dashboard');
