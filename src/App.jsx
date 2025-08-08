@@ -49,7 +49,7 @@ function App() {
                           case 'dashboard':
                             return <Dashboard />;
                           case 'chat':
-                            return <SecureChat />;
+                            return <  SecureChat sender="alice" recipient="bob" />;
                           case 'vault':
                             return <FileVault />;
                           case 'passwords':
