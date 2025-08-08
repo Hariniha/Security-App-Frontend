@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Shield, Bell, Moon, Sun, Smartphone, Lock, Eye, AlertTriangle, Save, User, Key, Clock } from 'lucide-react';
+import axios from '../../utils/axios';
 
 const Settings = () => {
   const [settings, setSettings] = useState({
@@ -13,13 +14,38 @@ const Settings = () => {
     chatNotifications: true,
     vaultNotifications: true
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const [logs] = useState([
-    { id: 1, action: 'Login successful', timestamp: '2024-01-15 14:30:25', location: 'New York, NY', ip: '192.168.1.1' },
-    { id: 2, action: 'Password changed', timestamp: '2024-01-14 09:15:10', location: 'New York, NY', ip: '192.168.1.1' },
-    { id: 3, action: '2FA enabled', timestamp: '2024-01-13 16:45:33', location: 'New York, NY', ip: '192.168.1.1' },
-    { id: 4, action: 'Login attempt failed', timestamp: '2024-01-12 22:18:07', location: 'Unknown', ip: '203.45.67.89' },
-  ]);
+  // Replace with actual userId logic (e.g., from auth context or localStorage)
+  const userId = localStorage.getItem('userId');
+
+  useEffect(() => {
+    if (!userId) return;
+    setLoading(true);
+    axios.get(`/settings/${userId}`)
+      .then(res => {
+        if (res.data) setSettings(res.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError('Failed to load settings');
+        setLoading(false);
+      });
+  }, [userId]);
+
+  const [logs, setLogs] = useState([]);
+
+  useEffect(() => {
+    if (!userId) return;
+    axios.get(`/logs/${userId}`)
+      .then(res => {
+        setLogs(res.data || []);
+      })
+      .catch(() => {
+        setLogs([]);
+      });
+  }, [userId]);
 
   const handleSettingChange = (key, value) => {
     setSettings(prev => ({
@@ -28,13 +54,23 @@ const Settings = () => {
     }));
   };
 
-  const saveSettings = () => {
-    // Save settings logic here
-    console.log('Settings saved:', settings);
+  const saveSettings = async () => {
+    if (!userId) return;
+    setLoading(true);
+    setError('');
+    try {
+      await axios.post(`/settings/${userId}`, settings);
+      // Optionally show a success message
+    } catch (err) {
+      setError('Failed to save settings');
+    }
+    setLoading(false);
   };
 
   return (
     <div className="space-y-6">
+      {loading && <div className="text-cyan-400">Loading...</div>}
+      {error && <div className="text-red-400">{error}</div>}
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white mb-2">Settings</h1>
@@ -254,13 +290,16 @@ const Settings = () => {
           </div>
         </div>
         <div className="divide-y divide-slate-700/50">
+          {logs.length === 0 && (
+            <div className="p-6 text-gray-400">No logs found.</div>
+          )}
           {logs.map((log) => (
-            <div key={log.id} className="p-6 hover:bg-slate-700/30 transition-colors">
+            <div key={log._id || log.id} className="p-6 hover:bg-slate-700/30 transition-colors">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className={`w-3 h-3 rounded-full ${
-                    log.action.includes('failed') ? 'bg-red-400' :
-                    log.action.includes('successful') ? 'bg-green-400' :
+                    log.action && log.action.includes('failed') ? 'bg-red-400' :
+                    log.action && log.action.includes('successful') ? 'bg-green-400' :
                     'bg-cyan-400'
                   }`}></div>
                   <div>
