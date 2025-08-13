@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'https://security-app-backend-ub96.onrender.com/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://security-app-backend-ub96.onrender.com/api',
 });
 
 instance.interceptors.request.use((config) => {
