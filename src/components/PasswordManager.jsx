@@ -1,44 +1,72 @@
-import React, { useState } from 'react';
-import { Key, Copy, Eye, EyeOff, Plus, Search, Filter, Shield, RefreshCw, Tag, Star } from 'lucide-react';
+
+import React, { useState, useEffect } from 'react';
+import { Key, Copy, Eye, EyeOff, Plus, Search, Filter, Shield, RefreshCw, Tag, Star, Trash2 } from 'lucide-react';
+import axios from '../../utils/axios';
 
 const PasswordManager = () => {
   const [showPassword, setShowPassword] = useState({});
   const [showAddForm, setShowAddForm] = useState(false);
-  const [passwords, setPasswords] = useState([
-    {
-      id: 1,
-      website: 'GitHub',
-      username: 'john.doe@email.com',
-      password: 'Gh7$kL9pX2@vN5',
-      strength: 95,
-      category: 'Development',
-      tags: ['work', 'code'],
-      lastUpdated: '2024-01-15',
-      favorite: true
-    },
-    {
-      id: 2,
-      website: 'Gmail',
-      username: 'john.doe@gmail.com',
-      password: 'Zx8#mQ4wE6!rT2',
-      strength: 88,
-      category: 'Personal',
-      tags: ['email', 'personal'],
-      lastUpdated: '2024-01-10',
-      favorite: false
-    },
-    {
-      id: 3,
-      website: 'Banking',
-      username: 'johndoe123',
-      password: 'Ab3$nM7yU9@kL1',
-      strength: 92,
-      category: 'Finance',
-      tags: ['banking', 'finance'],
-      lastUpdated: '2024-01-08',
-      favorite: true
+  const [passwords, setPasswords] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    title: '',
+    username: '',
+    password: '',
+    url: '',
+    notes: ''
+  });
+  const [error, setError] = useState('');
+
+  // Fetch passwords from backend
+  useEffect(() => {
+    fetchPasswords();
+  }, []);
+
+  const fetchPasswords = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get('/passwords');
+      setPasswords(res.data);
+    } catch (err) {
+      setError('Failed to fetch passwords');
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+
+  const handleFormChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleAddPassword = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const res = await axios.post('/passwords', form);
+      setPasswords([res.data, ...passwords]);
+      setShowAddForm(false);
+      setForm({ title: '', username: '', password: '', url: '', notes: '' });
+    } catch (err) {
+      setError('Failed to add password');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeletePassword = async (id) => {
+    if (!window.confirm('Delete this password?')) return;
+    setLoading(true);
+    setError('');
+    try {
+      await axios.delete(`/passwords/${id}`);
+      setPasswords(passwords.filter(p => p._id !== id));
+    } catch (err) {
+      setError('Failed to delete password');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const togglePasswordVisibility = (id) => {
     setShowPassword(prev => ({
@@ -112,12 +140,17 @@ const PasswordManager = () => {
 
       {/* Password List */}
       <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl border border-cyan-500/20 overflow-hidden">
-        <div className="p-6 border-b border-slate-700/50">
+        <div className="p-6 border-b border-slate-700/50 flex items-center justify-between">
           <h3 className="text-xl font-semibold text-white">Saved Passwords</h3>
+          {loading && <span className="text-cyan-400 ml-4">Loading...</span>}
         </div>
+        {error && <div className="text-red-400 px-6 py-2">{error}</div>}
         <div className="divide-y divide-slate-700/50">
+          {passwords.length === 0 && !loading && (
+            <div className="p-6 text-gray-400">No passwords found.</div>
+          )}
           {passwords.map((password) => (
-            <div key={password.id} className="p-6 hover:bg-slate-700/30 transition-colors">
+            <div key={password._id} className="p-6 hover:bg-slate-700/30 transition-colors">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4 flex-1">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 flex items-center justify-center">
@@ -125,24 +158,24 @@ const PasswordManager = () => {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
-                      <h4 className="text-white font-medium text-lg">{password.website}</h4>
-                      {password.favorite && <Star className="w-4 h-4 text-yellow-400 fill-current" />}
-                      <span className="px-2 py-1 bg-slate-700 text-xs text-gray-300 rounded">{password.category}</span>
+                      <h4 className="text-white font-medium text-lg">{password.title || password.url || 'No Title'}</h4>
+                      {/* <Star className="w-4 h-4 text-yellow-400 fill-current" /> */}
+                      {password.url && <span className="px-2 py-1 bg-slate-700 text-xs text-cyan-300 rounded">{password.url}</span>}
                     </div>
                     <p className="text-gray-400 text-sm mb-2">{password.username}</p>
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center space-x-2">
                         <input
-                          type={showPassword[password.id] ? 'text' : 'password'}
+                          type={showPassword[password._id] ? 'text' : 'password'}
                           value={password.password}
                           readOnly
                           className="bg-slate-700/50 border border-slate-600 rounded px-3 py-1 text-white text-sm w-40"
                         />
                         <button
-                          onClick={() => togglePasswordVisibility(password.id)}
+                          onClick={() => togglePasswordVisibility(password._id)}
                           className="p-1 text-gray-400 hover:text-cyan-400 transition-colors"
                         >
-                          {showPassword[password.id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          {showPassword[password._id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
                         <button
                           onClick={() => copyToClipboard(password.password)}
@@ -151,31 +184,16 @@ const PasswordManager = () => {
                           <Copy className="w-4 h-4" />
                         </button>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-400">Strength:</span>
-                        <div className="flex items-center space-x-2">
-                          <div className="w-16 bg-slate-700 rounded-full h-2">
-                            <div 
-                              className={`h-2 rounded-full ${getStrengthBg(password.strength)}`}
-                              style={{ width: `${password.strength}%` }}
-                            ></div>
-                          </div>
-                          <span className={`text-sm font-medium ${getStrengthColor(password.strength)}`}>
-                            {password.strength}%
-                          </span>
-                        </div>
-                      </div>
+                      {/* Password strength is not available from backend, so skip for now */}
                     </div>
+                    {password.notes && <div className="text-xs text-gray-400 mt-1">{password.notes}</div>}
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <button className="p-2 text-gray-400 hover:text-cyan-400 transition-colors">
-                    <RefreshCw className="w-5 h-5" />
+                  <button className="p-2 text-red-400 hover:text-red-600 transition-colors" onClick={() => handleDeletePassword(password._id)}>
+                    <Trash2 className="w-5 h-5" />
                   </button>
-                  <div className="text-right text-sm text-gray-400">
-                    <p>Updated</p>
-                    <p>{password.lastUpdated}</p>
-                  </div>
+                  {/* <RefreshCw className="w-5 h-5 text-gray-400" /> */}
                 </div>
               </div>
             </div>
@@ -183,39 +201,24 @@ const PasswordManager = () => {
         </div>
       </div>
 
-      {/* Security Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl p-6 border border-cyan-500/20">
-          <div className="flex items-center justify-between mb-4">
-            <h4 className="text-lg font-semibold text-white">Average Strength</h4>
-            <Shield className="w-6 h-6 text-cyan-400" />
-          </div>
-          <div className="text-center">
-            <p className="text-3xl font-bold text-green-400 mb-2">92%</p>
-            <p className="text-sm text-gray-400">Excellent security</p>
-          </div>
+      {/* Add Password Modal */}
+      {showAddForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <form onSubmit={handleAddPassword} className="bg-slate-900 rounded-2xl p-8 w-full max-w-md border border-cyan-500/30 space-y-4">
+            <h2 className="text-xl font-bold text-white mb-4">Add New Password</h2>
+            <input name="title" value={form.title} onChange={handleFormChange} required placeholder="Title (e.g. GitHub)" className="w-full px-4 py-2 rounded bg-slate-800 text-white border border-slate-700 focus:border-cyan-500 outline-none" />
+            <input name="username" value={form.username} onChange={handleFormChange} required placeholder="Username or Email" className="w-full px-4 py-2 rounded bg-slate-800 text-white border border-slate-700 focus:border-cyan-500 outline-none" />
+            <input name="password" value={form.password} onChange={handleFormChange} required placeholder="Password" className="w-full px-4 py-2 rounded bg-slate-800 text-white border border-slate-700 focus:border-cyan-500 outline-none" />
+            <input name="url" value={form.url} onChange={handleFormChange} placeholder="Website URL (optional)" className="w-full px-4 py-2 rounded bg-slate-800 text-white border border-slate-700 focus:border-cyan-500 outline-none" />
+            <textarea name="notes" value={form.notes} onChange={handleFormChange} placeholder="Notes (optional)" className="w-full px-4 py-2 rounded bg-slate-800 text-white border border-slate-700 focus:border-cyan-500 outline-none" />
+            <div className="flex justify-end space-x-2 mt-4">
+              <button type="button" onClick={() => setShowAddForm(false)} className="px-4 py-2 rounded bg-slate-700 text-gray-300 hover:bg-slate-600">Cancel</button>
+              <button type="submit" className="px-4 py-2 rounded bg-cyan-500 text-white hover:bg-cyan-600">Add</button>
+            </div>
+            {error && <div className="text-red-400 mt-2">{error}</div>}
+          </form>
         </div>
-        <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl p-6 border border-cyan-500/20">
-          <div className="flex items-center justify-between mb-4">
-            <h4 className="text-lg font-semibold text-white">Weak Passwords</h4>
-            <Key className="w-6 h-6 text-yellow-400" />
-          </div>
-          <div className="text-center">
-            <p className="text-3xl font-bold text-yellow-400 mb-2">0</p>
-            <p className="text-sm text-gray-400">Need attention</p>
-          </div>
-        </div>
-        <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl p-6 border border-cyan-500/20">
-          <div className="flex items-center justify-between mb-4">
-            <h4 className="text-lg font-semibold text-white">Duplicates</h4>
-            <Copy className="w-6 h-6 text-red-400" />
-          </div>
-          <div className="text-center">
-            <p className="text-3xl font-bold text-red-400 mb-2">0</p>
-            <p className="text-sm text-gray-400">Reused passwords</p>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, BrowserRouter } from 'react-router-dom';
 import AuthPage from './components/AuthPage';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
@@ -8,6 +8,7 @@ import FileVault from './components/FileVault';
 import PasswordManager from './components/PasswordManager';
 import Settings from './components/Settings';
 import ResetPassword from './components/ResetPassword';
+import ChatPage from './components/ChatPage';
 
 
 
@@ -26,7 +27,7 @@ function App() {
   };
 
   return (
-    <Router>
+   
       <Routes>
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route
@@ -48,8 +49,16 @@ function App() {
                         switch (activeModule) {
                           case 'dashboard':
                             return <Dashboard />;
-                          case 'chat':
-                            return <  SecureChat sender="alice" recipient="bob" />;
+                          case 'chat': {
+                            // Get sender from localStorage (user info)
+                            let sender = 'alice';
+                            try {
+                              const user = JSON.parse(localStorage.getItem('user'));
+                              if (user && user.email) sender = user.email;
+                              if (user && user.username) sender = user.username;
+                            } catch {}
+                            return <ChatPage sender={sender} />;
+                          }
                           case 'vault':
                             return <FileVault />;
                           case 'passwords':
@@ -68,7 +77,7 @@ function App() {
           }
         />
       </Routes>
-    </Router>
+  
   );
 }
 
