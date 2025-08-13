@@ -213,8 +213,6 @@ const Settings = () => {
               </label>
             </div>
 
-
-
             {/* Chat Notifications */}
             <div className="flex items-center justify-between">
               <div>
