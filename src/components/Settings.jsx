@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Bell, Moon, Sun, Smartphone, Lock, Eye, AlertTriangle, Save, User, Key, Clock } from 'lucide-react';
 import axios from '../../utils/axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Settings = () => {
   const [settings, setSettings] = useState({
@@ -17,8 +19,12 @@ const Settings = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Replace with actual userId logic (e.g., from auth context or localStorage)
-  const userId = localStorage.getItem('userId');
+  // Get userId from user object in localStorage
+  let userId = null;
+  try {
+    const user = JSON.parse(localStorage.getItem('user'));
+    userId = user && (user._id || user.id);
+  } catch {}
 
   useEffect(() => {
     if (!userId) return;
@@ -55,13 +61,23 @@ const Settings = () => {
   };
 
   const saveSettings = async () => {
-    if (!userId) return;
+    console.log('saveSettings called', userId);
+    if (!userId) {
+      console.error('No userId found, aborting saveSettings');
+      return;
+    }
     setLoading(true);
     setError('');
     try {
-      await axios.post(`/settings/${userId}`, settings);
-      // Optionally show a success message
+      console.log('settings to save:', settings);
+      const res = await axios.post(`/settings/${userId}`, settings);
+      console.log('response from backend:', res);
+      if (res.status === 201) {
+        toast.success('Settings saved successfully!', { position: 'center', autoClose: 2000 });
+      }
+      // Optionally, show a different toast for update (200)
     } catch (err) {
+      console.error('Error in saveSettings:', err);
       setError('Failed to save settings');
     }
     setLoading(false);
@@ -69,6 +85,7 @@ const Settings = () => {
 
   return (
     <div className="space-y-6">
+      <ToastContainer />
       {loading && <div className="text-cyan-400">Loading...</div>}
       {error && <div className="text-red-400">{error}</div>}
       {/* Header */}
@@ -196,22 +213,7 @@ const Settings = () => {
               </label>
             </div>
 
-            {/* Breach Alerts */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-white font-medium">Breach Alerts</p>
-                <p className="text-sm text-gray-400">Notifications for data breaches</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={settings.breachAlerts}
-                  onChange={(e) => handleSettingChange('breachAlerts', e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-slate-600 rounded-full peer peer-focus:ring-4 peer-focus:ring-cyan-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
-              </label>
-            </div>
+
 
             {/* Chat Notifications */}
             <div className="flex items-center justify-between">
@@ -247,25 +249,7 @@ const Settings = () => {
               </label>
             </div>
 
-            {/* Theme Toggle */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                {settings.darkTheme ? <Moon className="w-5 h-5 text-cyan-400" /> : <Sun className="w-5 h-5 text-yellow-400" />}
-                <div>
-                  <p className="text-white font-medium">Dark Theme</p>
-                  <p className="text-sm text-gray-400">Switch to light mode</p>
-                </div>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={settings.darkTheme}
-                  onChange={(e) => handleSettingChange('darkTheme', e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-slate-600 rounded-full peer peer-focus:ring-4 peer-focus:ring-cyan-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500"></div>
-              </label>
-            </div>
+            
           </div>
         </div>
       </div>

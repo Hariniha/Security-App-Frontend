@@ -1,8 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from '../../utils/axios';
 import { Shield, Bell, MessageSquare, AlertTriangle, Play, Plus, Send, TrendingUp, Lock, Users } from 'lucide-react';
 
-const Dashboard= () => {
-  const safetyScore = 85;
+const Dashboard = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [summary, setSummary] = useState({
+    safetyScore: 0,
+    alerts: 0,
+    unreadMessages: 0,
+    passwordStrength: 0,
+    vaultEncryption: 0,
+    twoFACoverage: 0,
+    recentActivity: [],
+  });
+
+  useEffect(() => {
+    const fetchSummary = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get('/dashboard/summary');
+        setSummary(res.data);
+        setError('');
+      } catch (err) {
+        setError('Failed to load dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSummary();
+  }, []);
+
+  const { safetyScore, alerts, unreadMessages, breaches, passwordStrength, vaultEncryption, twoFACoverage, recentActivity } = summary;
+
+  if (loading) return <div className="text-cyan-400">Loading dashboard...</div>;
+  if (error) return <div className="text-red-400">{error}</div>;
 
   return (
     <div className="space-y-6">
@@ -41,7 +73,7 @@ const Dashboard= () => {
               <span className="text-2xl font-bold text-cyan-400">{safetyScore}%</span>
             </div>
           </div>
-          <p className="text-sm text-center text-gray-400">Excellent Security</p>
+          <p className="text-sm text-center text-gray-400">{safetyScore > 80 ? 'Excellent Security' : safetyScore > 60 ? 'Good Security' : 'Needs Improvement'}</p>
         </div>
 
         {/* Recent Alerts */}
@@ -51,7 +83,7 @@ const Dashboard= () => {
             <Bell className="w-6 h-6 text-yellow-400" />
           </div>
           <div className="text-center">
-            <p className="text-3xl font-bold text-white mb-2">2</p>
+            <p className="text-3xl font-bold text-white mb-2">{alerts}</p>
             <p className="text-sm text-gray-400">New this week</p>
           </div>
         </div>
@@ -63,42 +95,16 @@ const Dashboard= () => {
             <MessageSquare className="w-6 h-6 text-green-400" />
           </div>
           <div className="text-center">
-            <p className="text-3xl font-bold text-white mb-2">5</p>
+            <p className="text-3xl font-bold text-white mb-2">{unreadMessages}</p>
             <p className="text-sm text-gray-400">Unread secure</p>
           </div>
         </div>
 
         {/* Breach Status */}
-        <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl p-6 border border-cyan-500/20 hover:border-cyan-500/40 transition-all duration-300">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-white">Breaches</h3>
-            <AlertTriangle className="w-6 h-6 text-red-400" />
-          </div>
-          <div className="text-center">
-            <p className="text-3xl font-bold text-white mb-2">0</p>
-            <p className="text-sm text-gray-400">Recent breaches</p>
-          </div>
-        </div>
-      </div>
+        
 
       {/* Quick Actions */}
-      <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl p-6 border border-cyan-500/20">
-        <h3 className="text-xl font-semibold text-white mb-6">Quick Actions</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="flex items-center justify-center space-x-3 p-4 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-xl border border-cyan-500/30 text-white hover:from-cyan-500/30 hover:to-blue-500/30 transition-all duration-300 group">
-            <Play className="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" />
-            <span className="font-medium">Run Security Check</span>
-          </button>
-          <button className="flex items-center justify-center space-x-3 p-4 bg-gradient-to-r from-green-500/20 to-cyan-500/20 rounded-xl border border-green-500/30 text-white hover:from-green-500/30 hover:to-cyan-500/30 transition-all duration-300 group">
-            <Plus className="w-5 h-5 text-green-400 group-hover:scale-110 transition-transform" />
-            <span className="font-medium">Add Vault File</span>
-          </button>
-          <button className="flex items-center justify-center space-x-3 p-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl border border-blue-500/30 text-white hover:from-blue-500/30 hover:to-purple-500/30 transition-all duration-300 group">
-            <Send className="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform" />
-            <span className="font-medium">Start Secure Chat</span>
-          </button>
-        </div>
-      </div>
+      
 
       {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -106,59 +112,33 @@ const Dashboard= () => {
         <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl p-6 border border-cyan-500/20">
           <h3 className="text-xl font-semibold text-white mb-6">Recent Activity</h3>
           <div className="space-y-4">
-            {[
-              { icon: Lock, text: 'Password updated for GitHub', time: '2 hours ago', color: 'text-green-400' },
-              { icon: Shield, text: 'Security scan completed', time: '5 hours ago', color: 'text-cyan-400' },
-              { icon: Users, text: 'New secure chat initiated', time: '1 day ago', color: 'text-blue-400' },
-              { icon: AlertTriangle, text: 'Breach alert resolved', time: '2 days ago', color: 'text-yellow-400' },
-            ].map((activity, index) => (
-              <div key={index} className="flex items-center space-x-4 p-3 rounded-lg bg-slate-900/30 hover:bg-slate-900/50 transition-colors">
-                <activity.icon className={`w-5 h-5 ${activity.color}`} />
-                <div className="flex-1">
-                  <p className="text-white text-sm">{activity.text}</p>
-                  <p className="text-gray-400 text-xs">{activity.time}</p>
+            {recentActivity.length === 0 && <div className="text-gray-400">No recent activity</div>}
+            {recentActivity.map((activity, index) => {
+              let icon = Lock, color = 'text-cyan-400', text = activity.message || activity.type;
+              if (activity.type === 'alert') { icon = AlertTriangle; color = 'text-yellow-400'; }
+              if (activity.type === 'password') { icon = Lock; color = 'text-green-400'; }
+              if (activity.type === 'chat') { icon = Users; color = 'text-blue-400'; }
+              if (activity.type === 'scan') { icon = Shield; color = 'text-cyan-400'; }
+              return (
+                <div key={index} className="flex items-center space-x-4 p-3 rounded-lg bg-slate-900/30 hover:bg-slate-900/50 transition-colors">
+                  {React.createElement(icon, { className: `w-5 h-5 ${color}` })}
+                  <div className="flex-1">
+                    <p className="text-white text-sm">{text}</p>
+                    <p className="text-gray-400 text-xs">{new Date(activity.createdAt).toLocaleString()}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
         {/* Security Stats */}
-        <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl p-6 border border-cyan-500/20">
-          <h3 className="text-xl font-semibold text-white mb-6">Security Statistics</h3>
-          <div className="space-y-6">
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-400">Password Strength</span>
-                <span className="text-cyan-400">92%</span>
-              </div>
-              <div className="w-full bg-slate-700 rounded-full h-2">
-                <div className="bg-gradient-to-r from-cyan-500 to-green-500 h-2 rounded-full w-[92%]"></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-400">Vault Encryption</span>
-                <span className="text-green-400">100%</span>
-              </div>
-              <div className="w-full bg-slate-700 rounded-full h-2">
-                <div className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full w-full"></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-400">2FA Coverage</span>
-                <span className="text-yellow-400">76%</span>
-              </div>
-              <div className="w-full bg-slate-700 rounded-full h-2">
-                <div className="bg-gradient-to-r from-yellow-500 to-orange-500 h-2 rounded-full w-[76%]"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+ 
+</div>
       </div>
     </div>
   );
-};
+
+}
 
 export default Dashboard;

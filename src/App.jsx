@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router, Routes, Route, BrowserRouter } from 'react-router-dom';
 import AuthPage from './components/AuthPage';
 import Sidebar from './components/Sidebar';
@@ -27,7 +29,8 @@ function App() {
   };
 
   return (
-   
+    <>
+      <ToastContainer />
       <Routes>
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route
@@ -77,7 +80,7 @@ function App() {
           }
         />
       </Routes>
-  
+    </>
   );
 }
 
