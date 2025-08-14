@@ -27,7 +27,7 @@ const SecureChat = ({ sender, recipient }) => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await axios.get('/chat/messages', {
+        const res = await axios.get('/api/chat/messages', {
           params: { user1: sender, user2: recipient }
         });
         setMessages(res.data.map(msg => ({
@@ -139,7 +139,7 @@ const SecureChat = ({ sender, recipient }) => {
     formData.append('sender', sender);
     formData.append('recipient', recipient);
     try {
-      await axios.post('/chat/upload', formData, {
+      await axios.post('/api/chat/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       // Optionally, refresh messages or emit socket event

@@ -20,7 +20,14 @@ function App() {
     // Check for token in localStorage on initial load
     return !!localStorage.getItem('token');
   });
-  const [activeModule, setActiveModule] = useState('dashboard');
+  const [activeModule, setActiveModule] = useState(() => {
+    return localStorage.getItem('activeModule') || 'dashboard';
+  });
+
+  // Persist activeModule to localStorage whenever it changes
+  React.useEffect(() => {
+    localStorage.setItem('activeModule', activeModule);
+  }, [activeModule]);
 
   const handleLogin = () => {
     setIsAuthenticated(true);
@@ -40,6 +47,7 @@ function App() {
     setActiveModule('dashboard');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('activeModule');
   };
 
   return (
