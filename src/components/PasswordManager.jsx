@@ -25,7 +25,7 @@ const PasswordManager = () => {
   const fetchPasswords = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('/passwords');
+    const res = await axios.get('/api/passwords');
       setPasswords(res.data);
     } catch (err) {
       setError('Failed to fetch passwords');
@@ -43,7 +43,7 @@ const PasswordManager = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await axios.post('/passwords', form);
+      const res = await axios.post('/api/passwords', form);
       setPasswords([res.data, ...passwords]);
       setShowAddForm(false);
       setForm({ title: '', username: '', password: '', url: '', notes: '' });
@@ -59,7 +59,7 @@ const PasswordManager = () => {
     setLoading(true);
     setError('');
     try {
-      await axios.delete(`/passwords/${id}`);
+      await axios.delete(`/api/passwords/${id}`);
       setPasswords(passwords.filter(p => p._id !== id));
     } catch (err) {
       setError('Failed to delete password');

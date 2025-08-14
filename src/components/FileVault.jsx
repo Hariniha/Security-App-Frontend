@@ -19,7 +19,7 @@ const FileVault = () => {
   const fetchFiles = async (searchQuery = '') => {
     setLoading(true);
     try {
-      const res = await axios.get('/files', {
+  const res = await axios.get('/api/files', {
         params: searchQuery ? { search: searchQuery } : {}
       });
       setFiles(res.data);
@@ -31,7 +31,7 @@ const FileVault = () => {
 
   const fetchStats = async () => {
     try {
-      const res = await axios.get('/files/stats');
+  const res = await axios.get('/api/files/stats');
       setStats(res.data);
     } catch (err) {
       setStats({ totalFiles: 0, totalSize: '0 MB', maxStorage: '5 GB' });
@@ -54,7 +54,7 @@ const FileVault = () => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-      await axios.post('/files/upload', formData, {
+      await axios.post('/api/files/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       fetchFiles();
@@ -87,7 +87,7 @@ const FileVault = () => {
   const handleDownload = async (fileId, fileName) => {
     setLoading(true);
     try {
-      const res = await axios.get(`/files/download/${fileId}`, { responseType: 'blob' });
+      const res = await axios.get(`/api/files/download/${fileId}`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -106,7 +106,7 @@ const FileVault = () => {
     if (!confirmed) return;
     setLoading(true);
     try {
-      await axios.delete(`/files/${fileId}`);
+      await axios.delete(`/api/files/${fileId}`);
       fetchFiles();
       fetchStats();
     } catch (err) {

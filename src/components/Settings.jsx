@@ -29,7 +29,7 @@ const Settings = () => {
   useEffect(() => {
     if (!userId) return;
     setLoading(true);
-    axios.get(`/settings/${userId}`)
+  axios.get(`/api/settings/${userId}`)
       .then(res => {
         if (res.data) setSettings(res.data);
         setLoading(false);
@@ -44,7 +44,7 @@ const Settings = () => {
 
   useEffect(() => {
     if (!userId) return;
-    axios.get(`/logs/${userId}`)
+  axios.get(`/api/logs/${userId}`)
       .then(res => {
         setLogs(res.data || []);
       })
@@ -70,10 +70,10 @@ const Settings = () => {
     setError('');
     try {
       console.log('settings to save:', settings);
-      const res = await axios.post(`/settings/${userId}`, settings);
+  const res = await axios.post(`/api/settings/${userId}`, settings);
       console.log('response from backend:', res);
-      if (res.status === 201) {
-        toast.success('Settings saved successfully!', { position: 'center', autoClose: 2000 });
+      if (res.status === 201 || res.status === 200) {
+        toast.success('Settings saved successfully!', { position: 'top-center', autoClose: 2000 });
       }
       // Optionally, show a different toast for update (200)
     } catch (err) {

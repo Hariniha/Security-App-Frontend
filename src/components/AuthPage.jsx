@@ -59,7 +59,8 @@ const AuthPage = ({ onLogin }) => {
             password: formData.password, 
             fullName: formData.fullName 
           };
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://security-app-backend-ub96.onrender.com/api';
+  const response = await fetch(`${apiUrl}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -112,7 +113,8 @@ const AuthPage = ({ onLogin }) => {
     }
     setForgotLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/auth/forgot-password', {
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://security-app-backend-ub96.onrender.com';
+  const response = await fetch(`${apiUrl}/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email })

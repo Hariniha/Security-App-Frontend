@@ -9,7 +9,7 @@ const ChatPage = ({ sender }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get('/users');
+      const res = await axios.get('/api/users');
         setUsers(res.data.filter(u => u.username !== sender));
         if (res.data.length > 0) setSelectedUser(res.data[0].username);
       } catch (err) {

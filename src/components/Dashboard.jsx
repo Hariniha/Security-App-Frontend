@@ -21,7 +21,7 @@ const Dashboard = () => {
     const fetchSummary = async () => {
       setLoading(true);
       try {
-        const res = await axios.get('/dashboard/summary');
+  const res = await axios.get('/api/dashboard/summary');
         setSummary(res.data);
         setError('');
       } catch (err) {
@@ -33,7 +33,7 @@ const Dashboard = () => {
     fetchSummary();
   }, []);
 
-  const { safetyScore, alerts, unreadMessages, breaches, passwordStrength, vaultEncryption, twoFACoverage, recentActivity } = summary;
+  const { safetyScore, alerts, unreadMessages, recentActivity } = summary;
 
   if (loading) return <div className="text-cyan-400">Loading dashboard...</div>;
   if (error) return <div className="text-red-400">{error}</div>;

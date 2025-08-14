@@ -46,7 +46,7 @@ const SecureChat = ({ sender, recipient }) => {
   }, [sender, recipient]);
 
   useEffect(() => {
-    socketRef.current = io('http://localhost:5000');
+    socketRef.current = io('https://security-app-backend-ub96.onrender.com');
     socketRef.current.emit('join', { sender, recipient });
     socketRef.current.on('receiveMessage', (msg) => {
       setMessages(prev => {

@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route, BrowserRouter } from 'react-rou
 import AuthPage from './components/AuthPage';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
-import SecureChat from './components/SecureChat';
+// import SecureChat from './components/SecureChat';
 import FileVault from './components/FileVault';
 import PasswordManager from './components/PasswordManager';
 import Settings from './components/Settings';
@@ -30,7 +30,7 @@ function App() {
 
   return (
     <>
-      <ToastContainer />
+  <ToastContainer position="top-center" autoClose={2000} />
       <Routes>
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route
