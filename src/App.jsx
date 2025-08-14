@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router, Routes, Route, BrowserRouter } from 'react-router-dom';
@@ -16,16 +16,30 @@ import ChatPage from './components/ChatPage';
 
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    // Check for token in localStorage on initial load
+    return !!localStorage.getItem('token');
+  });
   const [activeModule, setActiveModule] = useState('dashboard');
 
   const handleLogin = () => {
     setIsAuthenticated(true);
   };
 
+  // Keep isAuthenticated in sync with localStorage (e.g., if token is removed)
+  useEffect(() => {
+    const checkAuth = () => {
+      setIsAuthenticated(!!localStorage.getItem('token'));
+    };
+    window.addEventListener('storage', checkAuth);
+    return () => window.removeEventListener('storage', checkAuth);
+  }, []);
+
   const handleLogout = () => {
     setIsAuthenticated(false);
     setActiveModule('dashboard');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
   };
 
   return (
