@@ -104,7 +104,7 @@ const SecureChat = ({ sender, recipient }) => {
       selfDestructSeconds: selfDestructTimer
     };
     try {
-      await axios.post('/chat/send', msgPayload);
+      await axios.post('/api/chat/send', msgPayload);
       socketRef.current.emit('sendMessage', {
         ...msgPayload,
         timestamp: new Date().toISOString()
