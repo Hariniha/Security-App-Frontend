@@ -5,7 +5,7 @@ import EmojiPicker from 'emoji-picker-react';
 import React, { useState, useEffect, useRef } from 'react';
 import axios from '../../utils/axios';
 import { io } from 'socket.io-client';
-import { Send, Clock, Shield, Smile, Paperclip,  Check, CheckCheck } from 'lucide-react';
+import { Send, Clock, Shield, Smile, Check, CheckCheck } from 'lucide-react';
 
 const SecureChat = ({ sender, recipient }) => {
 
@@ -16,7 +16,6 @@ const SecureChat = ({ sender, recipient }) => {
   const [messages, setMessages] = useState([]);
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
-
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -198,19 +197,6 @@ const SecureChat = ({ sender, recipient }) => {
           </select>
         </div>
         <div className="flex items-center space-x-3 mt-2">
-          {/* Paperclip for file upload */}
-          <button
-            className="p-2 text-cyan-300 hover:text-cyan-400 transition-colors"
-            onClick={() => fileInputRef.current && fileInputRef.current.click()}
-          >
-            <Paperclip className="w-5 h-5" />
-          </button>
-          <input
-            type="file"
-            ref={fileInputRef}
-            style={{ display: 'none' }}
-            onChange={handleFileChange}
-          />
           {/* Smile for emoji picker */}
           <div className="relative">
             <button
