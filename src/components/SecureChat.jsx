@@ -32,6 +32,7 @@ const SecureChat = ({ sender, recipient }) => {
         });
         setMessages(res.data.map(msg => ({
           ...msg,
+          _id: msg._id || msg.id || Math.random().toString(36).substr(2, 9), // fallback if missing
           text: msg.encryptedText,
           sender: msg.sender === sender ? 'me' : 'other',
           timestamp: new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -86,6 +87,7 @@ const SecureChat = ({ sender, recipient }) => {
     });
     // Listen for real-time message deletions
     socketRef.current.on('messages_deleted', ({ ids }) => {
+      console.log('Received messages_deleted event for IDs:', ids);
       setMessages(prev => prev.filter(msg => !ids.includes(msg._id)));
     });
     return () => {
@@ -185,7 +187,7 @@ const SecureChat = ({ sender, recipient }) => {
                   <div className="mb-2">
                     {msg.file.mimeType && msg.file.mimeType.startsWith('image') ? (
                       <img
-                        src={`/uploads/${msg.file.fileName}.encrypted`}
+                        src={`/api/files/view/${msg.file._id || msg.file.id}`}
                         alt={msg.file.originalName || 'Image'}
                         className="max-w-[200px] max-h-[200px] rounded-lg border border-cyan-400/30 mb-1"
                         style={{ objectFit: 'cover' }}
