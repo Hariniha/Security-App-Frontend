@@ -12,7 +12,6 @@ const SecureChat = ({ sender, recipient }) => {
 
   const [message, setMessage] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const fileInputRef = useRef(null);
   const [selfDestructTimer, setSelfDestructTimer] = useState(60);
   const [messages, setMessages] = useState([]);
   const socketRef = useRef(null);
@@ -111,17 +110,7 @@ const SecureChat = ({ sender, recipient }) => {
         ...msgPayload,
         timestamp: new Date().toISOString()
       });
-      setMessages(prev => ([
-        ...prev,
-        {
-          ...msgPayload,
-          text: encryptedText,
-          sender: 'me',
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          status: 'sent',
-          encrypted: true
-        }
-      ]));
+  // Do not update messages here; wait for socket 'receiveMessage' event
       setMessage('');
     } catch (err) {
       // handle error
@@ -133,22 +122,6 @@ const SecureChat = ({ sender, recipient }) => {
     setShowEmojiPicker(false);
   };
 
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('sender', sender);
-    formData.append('recipient', recipient);
-    try {
-      await axios.post('/api/chat/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      // Optionally, refresh messages or emit socket event
-    } catch (err) {
-      // handle error
-    }
-  };
 
   return (
     <div className="flex flex-col h-full w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl shadow-2xl border border-cyan-700/30 p-2">
@@ -182,32 +155,14 @@ const SecureChat = ({ sender, recipient }) => {
                 onContextMenu={(e) => e.preventDefault()}
                 style={{ userSelect: 'none' }}
               >
-                {/* Show file or image if present, otherwise show text */}
-                {msg.file ? (
-                  <div className="mb-2">
-                    {msg.file.mimeType && msg.file.mimeType.startsWith('image') ? (
-                      <img
-                        src={`/api/files/view/${msg.file._id || msg.file.id}`}
-                        alt={msg.file.originalName || 'Image'}
-                        className="max-w-[200px] max-h-[200px] rounded-lg border border-cyan-400/30 mb-1"
-                        style={{ objectFit: 'cover' }}
-                        onError={e => { e.target.style.display = 'none'; }}
-                      />
-                    ) : (
-                      <a
-                        href={`/uploads/${msg.file.fileName}.encrypted`}
-                        download={msg.file.originalName || 'file'}
-                        className="text-cyan-200 underline break-all"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {msg.file.originalName || 'Download file'}
-                      </a>
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-base leading-relaxed break-words">{msg.text}</p>
-                )}
+
+
+
+
+
+
+                {/* Only show text messages */}
+                <p className="text-base leading-relaxed break-words">{msg.text}</p>
                 <div className="flex items-center justify-between mt-2 text-xs opacity-80">
                   <span>{msg.timestamp}</span>
                   <div className="flex items-center space-x-1">
@@ -229,7 +184,7 @@ const SecureChat = ({ sender, recipient }) => {
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center space-x-2 text-yellow-400">
             <Clock className="w-4 h-4" />
-            <span className="font-medium">Self-destruct: {selfDestructTimer}s</span>
+            <span className="font-medium">Selfdestruct: {selfDestructTimer}s</span>
           </div>
           <select
             value={selfDestructTimer}
