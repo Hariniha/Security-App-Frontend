@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, MessageSquare, FolderLock, Key, AlertTriangle, Settings, User, LogOut, Home } from 'lucide-react';
+import { Shield, MessageSquare, FolderLock, Key, Settings, User, LogOut, Home } from 'lucide-react';
 
 // Profile section as a separate component for clarity
 function SidebarProfile({ onLogout }) {
@@ -28,22 +28,21 @@ function SidebarProfile({ onLogout }) {
   );
 }
 
-
-
-const Sidebar = ({ activeModule, setActiveModule, onLogout }) => {
+const Sidebar = ({ activeModule, setActiveModule, onLogout, open, onClose }) => {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'chat', label: 'Secure Chat', icon: MessageSquare },
     { id: 'vault', label: 'File Vault', icon: FolderLock },
     { id: 'passwords', label: 'Passwords', icon: Key },
-   
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
-
   return (
-  <div className="fixed left-0 top-0 h-full w-56 sm:w-64 bg-slate-900/80 backdrop-blur-xl border-r border-cyan-500/20 z-50 min-w-[56px]">
-      {/* Header */}
-      <div className="p-6 border-b border-cyan-500/20">
+    <div
+      className={`fixed top-0 left-0 h-full w-64 bg-slate-900/90 backdrop-blur-xl border-r border-cyan-500/20 z-[100] min-w-[56px] transition-transform duration-300 sm:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'} sm:fixed sm:top-0 sm:left-0 sm:z-50`}
+      style={{ boxShadow: '0 0 40px 0 rgba(0,0,0,0.2)' }}
+    >
+      {/* Header & Close for mobile */}
+      <div className="p-6 border-b border-cyan-500/20 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <Shield className="w-8 h-8 text-cyan-400" />
           <div>
@@ -51,15 +50,23 @@ const Sidebar = ({ activeModule, setActiveModule, onLogout }) => {
             <p className="text-sm text-gray-400">Dashboard</p>
           </div>
         </div>
+        {/* Close button for mobile */}
+        <button
+          className="sm:hidden p-2 ml-2 rounded-lg text-cyan-400 hover:bg-slate-800/60 transition-colors"
+          onClick={onClose}
+          aria-label="Close sidebar"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
-
       {/* Navigation */}
       <nav className="flex-1 px-4 py-6">
         <ul className="space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeModule === item.id;
-            
             return (
               <li key={item.id}>
                 <button
@@ -80,7 +87,6 @@ const Sidebar = ({ activeModule, setActiveModule, onLogout }) => {
           })}
         </ul>
       </nav>
-
       {/* Profile Section */}
       <div className="p-4 border-t border-cyan-500/20">
         <SidebarProfile onLogout={onLogout} />
