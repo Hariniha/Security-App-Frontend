@@ -203,8 +203,8 @@ const PasswordManager = () => {
 
       {/* Add Password Modal */}
       {showAddForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <form onSubmit={handleAddPassword} className="bg-slate-900 rounded-2xl p-8 w-full max-w-md border border-cyan-500/30 space-y-4">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-2 sm:p-0">
+          <form onSubmit={handleAddPassword} className="bg-slate-900 rounded-2xl p-4 sm:p-8 w-full max-w-md border border-cyan-500/30 space-y-4">
             <h2 className="text-xl font-bold text-white mb-4">Add New Password</h2>
             <input name="title" value={form.title} onChange={handleFormChange} required placeholder="Title (e.g. GitHub)" className="w-full px-4 py-2 rounded bg-slate-800 text-white border border-slate-700 focus:border-cyan-500 outline-none" />
             <input name="username" value={form.username} onChange={handleFormChange} required placeholder="Username or Email" className="w-full px-4 py-2 rounded bg-slate-800 text-white border border-slate-700 focus:border-cyan-500 outline-none" />

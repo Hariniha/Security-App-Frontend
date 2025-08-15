@@ -51,8 +51,8 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 p-4">
-      <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl p-8 border border-cyan-500/20 shadow-2xl w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 p-2 sm:p-4">
+      <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl p-4 sm:p-8 border border-cyan-500/20 shadow-2xl w-full max-w-md">
         <h2 className="text-2xl font-bold text-white mb-6 text-center">Reset Password</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>

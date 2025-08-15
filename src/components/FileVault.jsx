@@ -138,7 +138,7 @@ const FileVault = () => {
 
       {/* Upload Area */}
       <div
-        className={`border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 ${
+        className={`border-2 border-dashed rounded-2xl p-4 sm:p-8 text-center transition-all duration-300 ${
           dragActive
             ? 'border-cyan-400 bg-cyan-500/10'
             : 'border-gray-600 hover:border-cyan-500 bg-slate-800/40 backdrop-blur-xl'
@@ -148,7 +148,7 @@ const FileVault = () => {
         onDragOver={handleDrag}
         onDrop={handleDrop}
       >
-        <Upload className="w-12 h-12 text-cyan-400 mx-auto mb-4" />
+  <Upload className="w-10 h-10 sm:w-12 sm:h-12 text-cyan-400 mx-auto mb-4" />
         <button
           className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl hover:from-cyan-600 hover:to-blue-600 transition-all duration-200 hover:scale-105"
           onClick={handleBrowseFiles}

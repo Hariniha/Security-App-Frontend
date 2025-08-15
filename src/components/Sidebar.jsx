@@ -41,7 +41,7 @@ const Sidebar = ({ activeModule, setActiveModule, onLogout }) => {
   ];
 
   return (
-    <div className="fixed left-0 top-0 h-full w-64 bg-slate-900/80 backdrop-blur-xl border-r border-cyan-500/20 z-50">
+  <div className="fixed left-0 top-0 h-full w-56 sm:w-64 bg-slate-900/80 backdrop-blur-xl border-r border-cyan-500/20 z-50 min-w-[56px]">
       {/* Header */}
       <div className="p-6 border-b border-cyan-500/20">
         <div className="flex items-center space-x-3">

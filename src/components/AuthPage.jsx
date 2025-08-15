@@ -130,7 +130,7 @@ const AuthPage = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center p-4">
+  <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center p-2 sm:p-4">
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
@@ -150,7 +150,7 @@ const AuthPage = ({ onLogin }) => {
         </div>
 
         {/* Auth Form */}
-        <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl p-8 border border-cyan-500/20 shadow-2xl">
+  <div className="bg-slate-800/40 backdrop-blur-xl rounded-2xl p-4 sm:p-8 border border-cyan-500/20 shadow-2xl">
           <div className="flex mb-6">
             <button
               onClick={() => setIsLogin(true)}

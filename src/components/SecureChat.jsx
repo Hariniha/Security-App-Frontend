@@ -123,9 +123,9 @@ const SecureChat = ({ sender, recipient }) => {
 
 
   return (
-    <div className="flex flex-col h-full w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl shadow-2xl border border-cyan-700/30 p-2">
+    <div className="flex flex-col h-full w-full max-w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl shadow-2xl border border-cyan-700/30 p-2 sm:max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto min-h-[80vh]">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 bg-slate-900/80 rounded-t-2xl border-b border-cyan-700/20">
+  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 sm:px-6 py-3 sm:py-4 bg-slate-900/80 rounded-t-2xl border-b border-cyan-700/20 gap-2">
         <div className="flex items-center space-x-4">
           <div>
             <h2 className="text-2xl font-bold text-cyan-300 tracking-wide">{recipient}</h2>
@@ -138,15 +138,15 @@ const SecureChat = ({ sender, recipient }) => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 bg-slate-900/60 rounded-b-2xl border-b border-cyan-700/10">
-        <div className="space-y-4">
+  <div className="flex-1 overflow-y-auto px-2 sm:px-6 py-2 sm:py-4 bg-slate-900/60 rounded-b-2xl border-b border-cyan-700/10 min-h-[40vh] max-h-[60vh]">
+  <div className="space-y-3 sm:space-y-4">
           {messages.map((msg, idx) => (
             <div
               key={msg._id || idx}
               className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-xs lg:max-w-md px-5 py-3 rounded-2xl shadow-lg ${
+                className={`max-w-[80vw] sm:max-w-xs lg:max-w-md px-3 sm:px-5 py-2 sm:py-3 rounded-2xl shadow-lg ${
                   msg.sender === 'me'
                     ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white border border-cyan-400/40'
                     : 'bg-slate-800/80 text-white border border-slate-600/40'
@@ -179,8 +179,8 @@ const SecureChat = ({ sender, recipient }) => {
       </div>
 
       {/* Self-Destruct Timer & Input */}
-      <div className="bg-slate-900/80 border-t border-cyan-700/20 px-6 py-4 rounded-b-2xl">
-        <div className="flex items-center justify-between mb-2">
+      <div className="bg-slate-900/80 border-t border-cyan-700/20 px-2 sm:px-6 py-2 sm:py-4 rounded-b-2xl">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-2">
           <div className="flex items-center space-x-2 text-yellow-400">
             <Clock className="w-4 h-4" />
             <span className="font-medium">Selfdestruct: {selfDestructTimer}s</span>
@@ -196,7 +196,7 @@ const SecureChat = ({ sender, recipient }) => {
             <option value={600}>10m</option>
           </select>
         </div>
-        <div className="flex items-center space-x-3 mt-2">
+  <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 mt-2 w-full">
           {/* Smile for emoji picker */}
           <div className="relative">
             <button
@@ -211,19 +211,19 @@ const SecureChat = ({ sender, recipient }) => {
               </div>
             )}
           </div>
-          <div className="flex-1 relative">
+          <div className="flex-1 relative w-full">
             <input
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
               placeholder="Type an encrypted message..."
-              className="w-full px-4 py-3 bg-slate-800/70 border border-cyan-700/40 rounded-xl text-cyan-100 placeholder-cyan-400 focus:outline-none focus:border-cyan-400 transition-colors"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-slate-800/70 border border-cyan-700/40 rounded-xl text-cyan-100 placeholder-cyan-400 focus:outline-none focus:border-cyan-400 transition-colors text-sm sm:text-base"
             />
           </div>
           <button
             onClick={sendMessage}
-            className="p-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-600 hover:to-blue-700 transition-all duration-200 hover:scale-105 shadow-lg"
+            className="p-2 sm:p-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl hover:from-cyan-600 hover:to-blue-700 transition-all duration-200 hover:scale-105 shadow-lg mt-2 sm:mt-0"
           >
             <Send className="w-5 h-5" />
           </button>

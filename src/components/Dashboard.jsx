@@ -39,15 +39,15 @@ const Dashboard = () => {
   if (error) return <div className="text-red-400">{error}</div>;
 
   return (
-    <div className="space-y-6">
+  <div className="space-y-6 px-2 sm:px-4 md:px-8 max-w-full w-full mx-auto">
       {/* Header */}
-      <div className="mb-8">
+  <div className="mb-8 text-center sm:text-left">
         <h1 className="text-3xl font-bold text-white mb-2">Security Overview</h1>
         <p className="text-gray-400">Monitor your digital safety and security status</p>
       </div>
 
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {/* Digital Safety Score */}
         <div className="col-span-1 md:col-span-2 lg:col-span-1 bg-slate-800/40 backdrop-blur-xl rounded-2xl p-6 border border-cyan-500/20 hover:border-cyan-500/40 transition-all duration-300">
           <div className="flex items-center justify-between mb-4">

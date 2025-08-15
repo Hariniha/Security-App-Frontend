@@ -20,9 +20,9 @@ const ChatPage = ({ sender }) => {
   }, [sender]);
 
   return (
-    <div className="flex h-full">
+    <div className="flex flex-col md:flex-row h-full w-full">
       {/* User List */}
-      <div className="w-64 bg-slate-900/80 border-r border-cyan-700/20 rounded-2xl p-4 overflow-y-auto">
+      <div className="w-full md:w-64 bg-slate-900/80 border-r border-cyan-700/20 rounded-2xl p-2 sm:p-4 overflow-y-auto mb-2 md:mb-0">
         <h3 className="text-lg font-bold text-cyan-300 mb-4">Users</h3>
         <ul className="space-y-2">
           {users.map(user => (
@@ -38,7 +38,7 @@ const ChatPage = ({ sender }) => {
         </ul>
       </div>
       {/* Chat Box */}
-      <div className="flex-1">
+  <div className="flex-1 w-full">
         {selectedUser ? (
           <SecureChat sender={sender} recipient={selectedUser} />
         ) : (
