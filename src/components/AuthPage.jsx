@@ -47,6 +47,7 @@ const AuthPage = ({ onLogin }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('[AuthPage] Form submitted:', formData);
     if (!validateForm()) return;
     setLoading(true);
     setError('');
@@ -59,15 +60,20 @@ const AuthPage = ({ onLogin }) => {
             password: formData.password, 
             fullName: formData.fullName 
           };
-  const apiUrl = import.meta.env.VITE_API_URL || 'https://security-app-backend-ub96.onrender.com/api';
-  const response = await fetch(`${apiUrl}${endpoint}`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://security-app-backend-ub96.onrender.com/api';
+      console.log('[AuthPage] Sending request to:', `${apiUrl}${endpoint}`);
+      const start = Date.now();
+      const response = await fetch(`${apiUrl}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
       });
+      const duration = Date.now() - start;
+      console.log(`[AuthPage] Response received in ${duration}ms`);
       const data = await response.json();
+      console.log('[AuthPage] Response data:', data);
       if (!response.ok) {
         throw new Error(data.error || 'Authentication failed');
       }
@@ -84,6 +90,7 @@ const AuthPage = ({ onLogin }) => {
       });
       onLogin();
     } catch (err) {
+      console.error('[AuthPage] Error:', err);
       setError(err.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
@@ -226,6 +233,7 @@ const AuthPage = ({ onLogin }) => {
                   placeholder="Enter your email"
                   required
                   disabled={loading}
+                  autoComplete="username"
                 />
               </div>
             </div>
@@ -246,6 +254,7 @@ const AuthPage = ({ onLogin }) => {
                   placeholder="Enter your password"
                   required
                   disabled={loading}
+                  autoComplete="current-password"
                 />
                 <button
                   type="button"
